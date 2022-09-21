@@ -9,7 +9,7 @@ Watch full tutorial <a href="https://youtu.be/2_mgyBD8dKc" target="_blank">Here<
 ### Getting Started
 
 
-1. `git clone https://github.com/divanov11/public_chat`
+1. `git clone https://github.com/divanov11/realtime_chat_django`
 2. `pip install -r requirements.txt`
 3. Create an app from your account on agora.io and get your `APP ID`. 
 
