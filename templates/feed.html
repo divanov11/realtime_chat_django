@@ -1,0 +1,108 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+    <section class="main--container">
+        <form id="post_form">
+            <input type="text" name="body" />
+        </form>
+
+        <div id="post__list">
+            {% for post in posts %}
+                <div class="post-wrapper">
+                    <strong>Posted {{post.created|timesince}} ago - by {{post.sender}}</strong>
+                    <p>{{ post.body }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+<script type="text/javascript" src="{% static 'js/agora-rtm.js' %}"></script>
+
+<script type="text/javascript">
+
+    const APP_ID ="0006d4711415404586f723ca6b5395dd"
+    const token = null//"007eJxTYJhgnNz3Pr/QNuDcW5Wpc6cfm2y8cEF/v8yNbH3D3qmF3XwKDGmmlomWKWlmhqlmhiaWSWaWyQbJxqlmFoZpFkYWRokpPyO1kytX6yTfvv+dmZEBAkF8FobcxMw8BgYAkUMiSw=="
+    const uid = String(Math.floor(Math.random() * 232 ))
+    const CHANNEL_NAME = "main"
+
+    let client;
+    let channel;
+
+
+    let username = localStorage.getItem('username')
+    if(!username){
+        window.location = '/register'
+    }
+
+    let iniateRTM = async () => {
+        client = await AgoraRTM.createInstance(APP_ID)
+        await client.login({uid, token})
+
+        channel = await client.createChannel(CHANNEL_NAME)
+        await channel.join()
+
+        channel.on('ChannelMessage', (message, peerId) => {
+            post = JSON.parse(message.text)
+            addMessageToDom(post)
+        })
+    }
+
+    iniateRTM()
+
+
+    let form = document.getElementById('post_form')
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        let bodyText = e.target.body.value
+        console.log(bodyText)
+        form.reset()
+
+        submitData(bodyText)
+    })
+
+
+    let submitData = async (bodyText) => {
+        let response = await fetch('/add/', {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({'body':bodyText, 'sender':username})
+        })
+        let data = await response.json()
+        data['sender'] = username
+
+        channel.sendMessage({text:JSON.stringify(data), type:'text'})
+
+        console.log('Data:', data )
+        addMessageToDom(data)
+
+
+    }
+
+
+    let addMessageToDom  = async (message) => {
+        let postList = document.getElementById('post__list')
+
+        let timeSince = new Intl.RelativeTimeFormat('en')
+
+        let messageTime = new Date()
+
+        let diff = new Date() - new Date(messageTime)
+        let ago = timeSince.format(- diff/(1000*60*60*24), 'seconds')
+
+        let postWrapper = `<div class="post-wrapper">
+                                <strong>Posted ${ago} - by ${message.sender}</strong>
+                                <p>${ message.body }</p>
+                               
+                            </div>`
+
+        postList.insertAdjacentHTML('afterbegin', postWrapper)
+    }
+
+
+
+</script>
+{% endblock content %}

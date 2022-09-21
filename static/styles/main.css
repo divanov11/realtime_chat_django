@@ -1,0 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Kurale&display=swap');
+
+*{
+    font-family: 'Kurale', serif;
+}
+
+.main--container{
+    width: 400px;
+    margin: 0 auto;
+}
