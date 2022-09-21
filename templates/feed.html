@@ -2,16 +2,19 @@
 {% load static %}
 
 {% block content %}
+
+    <button id="edit-name">Edit Username</button>
+
     <section class="main--container">
         <form id="post_form">
-            <input type="text" name="body" />
+            <input type="text" name="body" placeholder="Enter message..." />
         </form>
 
         <div id="post__list">
             {% for post in posts %}
                 <div class="post-wrapper">
-                    <strong>Posted {{post.created|timesince}} ago - by {{post.sender}}</strong>
-                    <p>{{ post.body }}</p>
+                    <strong>{{post.sender}} -  {{post.created|timesince}} ago</strong>
+                    <p class="post__body">{{ post.body }}</p>
                 </div>
             {% endfor %}
         </div>
@@ -21,8 +24,14 @@
 
 <script type="text/javascript">
 
-    const APP_ID ="0006d4711415404586f723ca6b5395dd"
-    const token = null//"007eJxTYJhgnNz3Pr/QNuDcW5Wpc6cfm2y8cEF/v8yNbH3D3qmF3XwKDGmmlomWKWlmhqlmhiaWSWaWyQbJxqlmFoZpFkYWRokpPyO1kytX6yTfvv+dmZEBAkF8FobcxMw8BgYAkUMiSw=="
+    let changeNameBtn = document.getElementById('edit-name')
+    changeNameBtn.addEventListener('click', (e)=> {
+        localStorage.removeItem('username')
+        window.location = '/register'
+    })
+
+    const APP_ID ="ENTER YOU APP ID HERE"
+    const token = null
     const uid = String(Math.floor(Math.random() * 232 ))
     const CHANNEL_NAME = "main"
 
@@ -95,7 +104,7 @@
 
         let postWrapper = `<div class="post-wrapper">
                                 <strong>Posted ${ago} - by ${message.sender}</strong>
-                                <p>${ message.body }</p>
+                                <p class="post__body">${ message.body }</p>
                                
                             </div>`
 

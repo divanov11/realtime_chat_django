@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from agora_token_builder import RtmTokenBuilder
 
 
 from .models import Post
@@ -26,7 +25,3 @@ def add_post(request):
     )
     serializer  = PostSerializer(post, many=False)
     return Response(serializer.data)
-
-# @api_view(['POST'])
-# def generate_token(request):
-#     token = RtmTokenBuilder.buildToken(appID, appCertificate, userAccount, role, privilegeExpiredTs)
